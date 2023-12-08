@@ -1,44 +1,42 @@
 "use client";
 
-// SongLyrics.tsx
+import { useEffect, useState } from 'react';
+import useLyrics from "@/hooks/useLyrics";
+import useGetSongById from "@/hooks/useGetSongById"; // Import your custom hook
+import usePlayer from '@/hooks/usePlayer';
 
-import React, { useEffect, useState } from "react";
-import useGetSongById from "@/hooks/useGetSongById";
-import usePlayer from "@/hooks/usePlayer";
-import axios from "axios"; // Make sure to install axios using npm install axios
-
-const SongLyrics = () => {
+const SongLyrics: React.FC = () => {
   const player = usePlayer();
-  const { song } = useGetSongById(player.activeId);
-  const [lyrics, setLyrics] = useState<string | null>(null);
+  const { song } = useGetSongById(player.activeId); // Assuming useGetSongById returns song object
+  const [lyrics, setLyrics] = useState<string>('');
 
   useEffect(() => {
-    // Check if both author and title are available
-    if (song?.author && song?.title) {
-      // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
-      const apiUrl = `YOUR_API_ENDPOINT?author=${encodeURIComponent(song.author)}&title=${encodeURIComponent(song.title)}`;
+    const fetchLyrics = async () => {
+      try {
+        if (song) {
+          const result = await useLyrics(song.author, song.title);
+          setLyrics(result);
+        }
+      } catch (error) {
+        // Handle error
+        console.error('Error:', error);
+      }
+    };
 
-      axios.get(apiUrl)
-        .then(response => {
-          // Assuming the API returns lyrics as a string
-          setLyrics(response.data.lyrics);
-        })
-        .catch(error => {
-          console.error("Error fetching lyrics:", error);
-        });
-    }
+    fetchLyrics();
   }, [song]);
 
   return (
     <div>
-      {lyrics ? (
-        <div>
-          <h2>{song?.title} - {song?.author}</h2>
-          <p>{lyrics}</p>
-        </div>
-      ) : (
-        <p>Loading lyrics...</p>
+      <h1>Music Player</h1>
+      {song && (
+        <>
+          <p>Artist: {song.author}</p>
+          <p>Title: {song.title}</p>
+        </>
       )}
+      <p>Lyrics: {lyrics}</p>
+      
     </div>
   );
 };

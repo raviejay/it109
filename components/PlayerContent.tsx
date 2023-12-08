@@ -10,6 +10,10 @@ import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import Slider from "./Slider";
 import usePlayer from "@/hooks/usePlayer";
 import useSound from "use-sound"; 
+import LyricsProvider from "@/providers/LyricsProvider";
+import { HiMusicNote } from "react-icons/hi";
+import Link from "next/link";
+import NextLink from "next/link";
 
 interface PlayerContentProps {
     song: Song;
@@ -178,6 +182,15 @@ const PlayerContent: React.FC<PlayerContentProps>= ({
         </div>
         <div className="hidden md:flex w-full justify-end pr-2">
           <div className="flex items-center gap-x-2 w-[120px]">
+          <NextLink href="/lyrics">
+            
+              <HiMusicNote
+                className="cursor-pointer"
+                size={25}
+                color="#ffff"
+              />
+          
+          </NextLink>
             <VolumeIcon 
               onClick={toggleMute} 
               className="cursor-pointer" 
@@ -187,6 +200,7 @@ const PlayerContent: React.FC<PlayerContentProps>= ({
               value={volume} 
               onChange={(value) => setVolume(value)}
               />
+
           </div>
         </div>
         </div>
